@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: springboot-test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-deployment
+  namespace: springboot-test  
+  labels:
+    app: springboot-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: springboot-app
+  template:
+    metadata:
+      labels:
+        app: springboot-app
+    spec:
+      containers:
+        - name: springboot-container
+          image: ghcr.io/koorovider/springboot-docker:latest
+          ports:
+            - containerPort: 8080    
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: "app.kubernetes.io/private-node"
+                    operator: In
+                    values:
+                      - "true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-service
+  namespace: springboot-test  
+spec:
+  selector:
+    app: springboot-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP            
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: springboot-ingress
+  namespace: springboot-test  
+  annotations:
+    kubernetes.io/ingress.class: alb  
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+  labels:
+    app: springboot-app
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: springboot-service
+                port:
+                  number: 80
