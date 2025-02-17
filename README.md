@@ -2,7 +2,7 @@
 # Spring Boot 애플리케이션 배포 및 EKS 설정
 
 ## 개요
-본 문서는 Spring Boot 애플리케이션의 Docker 이미지를 제작하고, GitHub Container Registry(GHCR)에 업로드하는 방법을 설명합니다. 또한, AWS 환경에서 Terraform을 활용하여 VPC 및 EKS를 구성하고, Helm을 사용하여 AWS Load Balancer Controller를 설치하는 방법을 포함합니다.
+본 문서는 Spring Boot 애플리케이션의 Docker 이미지를 제작하고, GitHub Container Registry(GHCR)에 업로드하는 방법을 설명합니다. 또한, AWS 환경에서 Terraform을 활용하여 VPC 및 EKS를 구성하고, Helm을 사용하여 AWS Load Balancer Controller를 설치 후 제작된 이미지를 사용하여 서비스 배포까지 진행합니다.
 
 ## 1. Spring Boot 애플리케이션 개발 및 Dockerfile 작성
 
